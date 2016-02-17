@@ -1,0 +1,167 @@
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+//the strings in the zero index of each of these is actually not used for convenient indexing purposes
+String[] myths = {
+  "n/a", 
+  "All victims of child sex trafficking are girls.", 
+  "Prostituted adolescents and teenagers can just leave whenever they want.", 
+  "People of all income levels are equally vulnerable to trafficking", 
+  "Prostitution of chilren is not exploitation if there is no trafficker", 
+  "Prostituted children earn large monetary sums"
+};
+String[] facts = {
+  "n/a", 
+  "50% of victims may be boys", 
+  "It is very difficult for prostitued adolescents and teenagers to leave", 
+  "Homelessness increases vulnerability and homeless youth are at risk", 
+  "Even without a trafficker, prostitution of children is still exploitation.", 
+  "Prostituted children do not make a lot of money, they are often destitute"
+};
+String[] messages = {
+  "n/a", 
+  "As many as 50% of commercially sexually exploited children in the United States may be boys. Boys generally enter “the life” at a younger age than girls: between 11-13 years old, compared to 12-14 years old for girls.", 
+  "A victim of domestic violence may not be able to leave at first sign of abuse. The relationship between a trafficker and their victim is a similar one, but different. The child may have run away from home, dropped out of school, and broken other laws while with the trafficker, such as aiding the trafficker in drug dealing. These victims are afraid of the police and feel like they cannot return home out of guilt and shame",
+  "LGBTQ (Lesbian, Gay, Bisexual, Transgender, Queer) youth are overrepresented within this discussion of homelessness. New York City identifies that 1 in 4 LGBTQ youth are homeless due to rejection, lack of support, violence and discrimination against them as well as no means to sustain themselves, which may leave them vulnerable",
+  "While not all prostituted teenagers have traffickers, that does not mean they make money. One study found that 43% of runaway youths in Los Angeles exchanged sex for food or shelter", 
+  "Those involved in the sex trade are seldom allowed to control the money they make, and are forced to hand it over to their traffickers or madams."
+};
+boolean[] level = new boolean[myths.length+1];
+boolean[] end = new boolean[myths.length+1];
+int[] rnd = new int[myths.length+1];
+int qHeight = 200; //height of black question box on top
+int correctScore;
+int incorrectScore;
+
+void setup() {
+  for (int i = 0; i<rnd.length; i++) {
+    rnd[i]=(int)random(2);
+  }
+  size(600, 600);
+  background(#0B1F9D);
+  textSize(80);
+  textAlign(CENTER);
+  text("Myth or Fact", width/2, height/2-60);
+  textSize(30);
+  text("Test your knowledge!", width/2, height/2);
+  text("Click to Start", width/2, height/2+60);
+  level[0]=true;
+  correctScore = 0;
+  incorrectScore = 0;
+}
+
+void draw() {
+  for (int i = 1; i<myths.length; i++) {
+    if (level[i]) {
+      showLevel(i);
+    }
+  }
+  displayScores();
+}
+
+void mouseClicked() {
+  if (level[myths.length]) {
+    endScreen();
+  }
+  for (int i = myths.length-1; i>0; i--) { //Note: i must be decreasing because of what mouseClicked checks and doesn't check as it goes down its list in ORDER (the order is crucial to the correction fxn of this method)
+    if (end[i]) {
+      end[i]=false;
+      level[i+1]=true;
+    } else if (level[i]) {
+      level[i]=false;
+      end[i]=true;
+      showEnd(i);
+    }
+  }
+  if (level[0]) {
+    level[0]=false;
+    level[1]=true;
+  }
+}
+
+
+
+void showLevel(int n) {
+  background(255);
+  //making the black question box and text
+  fill(0);
+  rect(0, 0, width, qHeight);
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(30);
+  text("Which is the Fact?", width/2, qHeight/2);
+  //making the line to separate left or right sections
+  line(width/2, qHeight, width/2, height);
+  //making the left and right sections
+  fill(50);
+  textSize(30);
+  int offset = 20; //distance from (invisible) text box to the edge of the left/right rectangle section
+  //following code is used to randomly put the myth or fact on the left or right section
+  if (rnd[n]==0) {
+    text(myths[n], offset, qHeight+offset, width/2-offset*2, height-qHeight-offset*2);  // Text wraps within text box
+    text(facts[n], width-offset-(width/2-offset*2), qHeight+offset, width/2-offset*2, height-qHeight-offset*2);  // Text wraps within text box
+  } else {
+    text(facts[n], offset, qHeight+offset, width/2-offset*2, height-qHeight-offset*2);  // Text wraps within text box
+    text(myths[n], width-offset-(width/2-offset*2), qHeight+offset, width/2-offset*2, height-qHeight-offset*2);  // Text wraps within text box
+  }
+}
+
+
+
+void showEnd(int n) {
+  textAlign(CENTER, BOTTOM);
+  textSize(30);
+  if (mouseY>qHeight && mouseX<width/2) { //left click
+    if (rnd[n]==0) { //myth is on the left side
+      background(#CB171D); //red
+      text("You are Incorrect", width/2, height/2);
+      incorrectScore+=1;
+    } else { //fact is on the right side
+      background(#11D11C); //green
+      text("You are Correct!", width/2, height/2);
+      correctScore+=1;
+    }
+  } else if (mouseY>qHeight && mouseX>width/2) { //right click
+    if (rnd[n]==0) { //myth is on the right side
+      background(#11D11C); //green
+      text("You are Correct!", width/2, height/2);
+      correctScore+=1;
+    } else { //fact is on the left side
+      background(#CB171D); //red
+      text("You are incorrect", width/2, height/2);
+      incorrectScore+=1;
+    }
+  }
+  textAlign(CENTER,TOP);
+  textSize(20);
+  text(messages[n], 20, height/2+20, width-20, height-20);  // Text wraps within text box
+}  
+
+void displayScores() {
+  if (level[0] || level[myths.length]) {
+    return;
+  } else {
+    fill(#CB07EA); //purple
+    textSize(16);
+    textAlign(LEFT, BOTTOM);
+    text("Correct Score: "+correctScore, 0, height);  
+    textAlign(RIGHT, BOTTOM);
+    text("Incorrect Score: "+incorrectScore, width, height);
+    fill(0);
+  }
+}
+
+void endScreen() {
+  background(#C14210);
+  textSize(30);
+  textAlign(CENTER, CENTER);
+  text("How did you do?", width/2, height/2-60);
+  textSize(20);
+  text("Correct Score: "+correctScore, width/2, height/2);  
+  text("Incorrect Score: "+incorrectScore, width/2, height/2+30);
+  text("Learn more at http://www.ecpat.net/", width/2, height/2+75); //TODO: add link(s)?
+}
+
+
+</script>
+<canvas id="mycanvas"></canvas>
+

@@ -1,0 +1,91 @@
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+
+String[] facts = {
+  "1.2 million children are trafficked every year worldwide.", 
+  "300,000 American children are at risk of falling victim to some form of commercial sexual exploitation.", 
+  "At least 100,000 children in the U.S. are commercially sexually exploited.", 
+  "Children as young as 12 years old are trafficked for sexual exploitation. ", 
+  "There are fewer than 250 shelter beds for commercially sexually exploited children in the U.S.", 
+  "In one study in New York City, almost 4,000 children were found to be sexually exploited-half of them were boys.", 
+  "45% of commercially sexually exploited children in New York City were exploited in hotels.",
+  "There are an estimated 27 million slaves in the world today. That's the highest recorded number of slaves in history!",
+  "The average cost of a slave around the world is $90.",
+  "Human trafficking has been identified as the largest human rights violation in the history of mankind.",
+  "Human trafficking is the second largest criminal enterprise in the world, after drug smuggling and arms dealing.",
+  "The United States is one of the top three destination points for trafficked victims. California, New York, Texas and Nevada are the top destination states within the country.",
+  "According to estimates, approximately 80 percent of trafficking involves sexual exploitation, and 19 percent involves labor exploitation.",
+  "The average age of a young woman being trafficked is 12-14 years old.",
+  "Immigration agents estimate that 10,000 women are being held in Los Angeles' underground brothels; this does not include the thousands of victims in domestic work, sweatshops or other informal industries.",
+  "An estimated 13 million children are enslaved around the world today, accounting for nearly half of trafficking victims in the world.",
+  "Trafficked children are significantly more likely to develop mental health problems, abuse substances, engage in prostitution as adults, and either commit or be victimized by violent crimes later in life."
+};
+boolean[] level = new boolean[facts.length];
+boolean homeScreen=true;
+int offset = 10; //distance from (invisible) text box to the edge of the left/right rectangle section
+int rnd;
+
+void setup() {
+  size(400, 60);
+  //for (int i =0;i<level.length;i++) {level[i]=false;}
+}
+
+void draw() {
+  //  for (int i = 0; i<facts.length; i++) {
+  //    if (level[i]) {
+  //      showLevel(i);
+  //      println("showing level "+i);
+  //    }
+  //  }
+  if (homeScreen) {
+    background(0);
+    textAlign(LEFT, TOP);
+    textSize(18);
+    fill(255);
+    //rect(offset, offset, width-offset*2, height-offset*2); //used for testing the text box that the following text is wrapped within
+    //fill(0);
+    text("Click here for more facts!", offset, offset, width-offset*2, height-offset*2);  // Text wraps within text box
+    fill(123);
+  }
+  if (homeScreen==false) {
+    showLevel(rnd);
+  }
+}
+
+
+void mouseClicked() {
+  //  for (int i = facts.length-1; i>=0; i--) { //Note: i must be decreasing because of what mouseClicked checks and doesn't check as it goes down its list in ORDER (the order is crucial to the correction fxn of this method)
+  //    if (level[i]) {
+  //      rnd = (int)random(facts.length);
+  //      level[i]=false;
+  //      level[i+1]=true;
+  //    }
+  //  }
+  int prevrnd = rnd;
+  rnd = (int)random(facts.length);
+  while (rnd==prevrnd) {
+    rnd=(int)random(facts.length);
+  }
+  if (homeScreen) {
+    homeScreen=false;
+  }
+  //println("mouse clicked"+millis());
+  //printArray(level);
+}
+
+void showLevel(int n) {
+  background(0);
+  fill(255);
+  //rect(offset, offset, width-offset*2, height-offset*2); //used for testing the text box that the following text is wrapped within
+  //fill(0);
+  textSize(12);
+  textAlign(LEFT, TOP);
+  text(facts[rnd], offset, offset, width-offset*2, height-offset*2);
+  //println("printed text");
+}
+
+
+
+</script>
+<canvas id="mycanvas"></canvas>
+

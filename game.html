@@ -1,0 +1,647 @@
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+
+boolean main;
+boolean living;
+boolean tv;
+boolean atDoor;
+boolean flashback;
+boolean kitchen;
+boolean newspaper;
+boolean den;
+boolean ecpat;
+boolean credits;
+int textAnim=0;
+String txt1;
+String txt2;
+String NewsBeat;
+int bclr;
+//Door curr;
+int room;
+Person human;
+Door d;
+
+boolean fading;
+int fadeCount;
+int textCount;
+//Animations
+boolean r1;
+boolean r2;
+boolean r3;
+boolean pause;
+boolean pause2;
+int rAnim;
+int rAnim2;
+int rAnim3;
+int pCount;
+int pCount2;
+void setup(){
+  bclr=0;
+  room = 0;
+  background(0);
+  size(800,500);
+  txt2 = "";
+  main = true;
+  human = new Person();
+  d = new Door(width-200);
+  rAnim=0;
+NewsBeat ="News\n";
+NewsBeat+="Trafficking is underrepresented in media.\n";
+NewsBeat+="Higher demand leads to higher rates of trafficking.\n";
+NewsBeat+="Legislation not enough to lower this demand.\n";
+NewsBeat+="Trafficking of adults is through fraud, force, and coercion.\n";
+NewsBeat+="Smuggling is often mistaken for Trafficking.\n";
+NewsBeat+="Victims often receive more consequences than either trafficker or child purchaser.\n";
+NewsBeat+="Social stigmas are contributing to this issue.";
+}
+
+void draw(){
+  if(main){
+    background(0);
+    fill(255);
+    textAlign(CENTER);
+    textSize(50);
+    text("The Next Step",width/2,100);
+    fill(#5F0303);
+    rect(0,height-100, width, 100);   
+    textSize(25);
+    fill(0);
+    txt1="Use the Left and Right arrow keys to move.";    
+    if(atDoor)
+      txt2="Use the Up arrow key to interact with objects.";
+    else
+      txt2=txt1;
+    d.display();
+    human.display();
+    checkDoor(d);
+  }
+  else if(living){
+    checkDoor(d);
+    background(bclr);
+    fill(#5F0303);
+    rect(0,height-100,width,100);
+    textSize(25);
+    if(bclr==0)
+      txt1="I can't sleep... I should find something to do.";
+    else
+      txt1="Maybe I'm overthinking it.";
+    if(atDoor){
+      if(bclr==0)
+        txt2="I feel like watching some TV.";
+      else
+        txt2="I'm hungry. I should get something to eat.";
+    }
+    else if(human.xCor>=width/2-120&&human.xCor<=width/2+5){
+      if(bclr==0)
+        txt2="Maybe I'll see what's on the news.";
+      else
+        txt2="Maybe I'll watch more news.";
+    }
+    else
+      txt2=txt1;
+    
+    fill(#640003);//TABLE&&TV
+    noStroke();
+    rect(width/2-121,height/2+81,135,30);
+    rect(width/2-122,height/2+82,135,30);
+    fill(150);//
+    noStroke();
+    rect(width/2-116,height/2-4,125,85);
+    rect(width/2-117,height/2-3,125,85);
+    rect(width/2-118,height/2-2,125,85);
+    rect(width/2-119,height/2-1,125,85);
+    stroke(0);
+    rect(width/2-120,height/2,125,85);
+    fill(255);
+    rect(width/2-110,height/2+5,105,75,5);
+    fill(#640003);
+    noStroke();
+    rect(width/2-113,height/2+113,25,40);
+    rect(width/2-114,height/2+114,25,40);
+    rect(width/2-18,height/2+113,25,40);
+    rect(width/2-19,height/2+114,25,40);
+    rect(width/2-123,height/2+83,135,30);
+    rect(width/2-124,height/2+84,135,30);
+    stroke(0);
+    rect(width/2-125,height/2+85,135,30);
+    rect(width/2-115,height/2+115,25,40);
+    rect(width/2-20,height/2+115,25,40);
+    d.display();
+    human.display();
+  }
+  else if(tv){
+    txt1="";
+    txt2=txt1;
+    background(255);
+    fill(255,0,0);
+    rect(0,height-20,width,20);
+    fill(0);
+    rect(0,height-60,width,40);
+    fill(255);
+    textSize(20);
+    textAlign(LEFT);
+    text("Warning signs include signs of physical abuse: unexplained bruises, black eyes, cuts or marks. Behavioral signs: fear, anxiety, depression, paranoia, secrecy. Change in physical appearance/style. Newly acquired prescence of randing or tattoos.", 200+textAnim, height-35);
+    fill(0,0,255);
+    rect(500,height-55,width-500,55);
+    fill(255);
+    textAlign(LEFT);
+    textSize(40);
+    text("ECPAT NEWS",525,height-15);
+    //reporter
+    fill(#FFF981);
+    ellipse(310+rAnim2/2,height-170-rAnim2/5,50,50);
+    fill(0,0,255);
+    quad(134,height-250,266,height-250,300,height-60,100,height-60);
+    fill(#FFF981);
+    ellipse(200,height-300,200,200);
+    fill(0);
+    rect(250-rAnim2/5,height-350,20,60);
+    rect(200-rAnim2/5,height-350,20,60);
+    ellipse(200,height-250,75-rAnim/5,20-rAnim/5);
+    
+    textAnim--;
+    
+    if(rAnim>60)
+      r1 = false;
+    if(rAnim<0)
+      r1 = true;
+    if(r1)
+      rAnim+=10;
+    else
+      rAnim-=10;
+      
+    if(rAnim2>60||rAnim2<0){
+      pause = true;
+      if(rAnim2>60)
+        rAnim2=60;
+      if(rAnim2<0)
+        rAnim2=0;
+    }
+    if (pause){
+      pCount++;
+    }
+    if (pCount>100){
+      pause = false;
+      pCount=0;
+      if(rAnim2>=60)
+        r2=false;
+      else
+        r2=true;
+    }
+    if(r2)
+      rAnim2+=1;
+    else
+      rAnim2-=1;
+    textSize(25);
+    fill(0);
+    textAlign(LEFT);
+    text("Human Trafficking exists in the US!",310,40);
+    text("1.2 million/year are trafficked globally", 310, 70);
+    text("300,000 American children are at risk!", 310, 100);
+    text("For more information, go to:\nwww.ecpat.net",310,130);
+  }
+  else if(flashback){
+    background(0);
+    fill(255);
+    textAlign(CENTER);
+    textSize(30);
+    if(textCount>=1){
+      if(fadeCount>=255||textCount>1)
+        fill(255);
+      else
+        fill(255,fadeCount);
+      text("This reminds me of something I saw yesterday.",width/2,height-450);
+    }
+    if(textCount>=2){
+      if(fadeCount>=255||textCount>2)
+        fill(255);
+      else
+        fill(255,fadeCount);
+      text("I saw a man with a boy at a hotel.",width/2,height-400);
+    }
+    if(textCount>=3){
+      if(fadeCount>=255||textCount>3)
+        fill(255);
+      else
+        fill(255,fadeCount);
+      text("It was the middle of the day, on a weekday.",width/2,height-350);
+    }
+    if(textCount>=4){
+      if(fadeCount>=255||textCount>4)
+        fill(255);
+      else
+        fill(255,fadeCount);
+      text("Kids were supposed to be at school",width/2,height-300);
+    }
+    if(textCount>=5){
+      if(fadeCount>=255||textCount>5)
+        fill(255);
+      else
+        fill(255,fadeCount);
+    text("I didn't think much at the time but...",width/2,height-250);
+    }
+    if(textCount>=6){
+      if(fadeCount>=255||textCount>6)
+        fill(255);
+      else
+        fill(255,fadeCount);
+    text("The kid looked nervous, scared even.",width/2, height - 200);
+    }
+    if(textCount>=7){
+      if(fadeCount>=255||textCount>7)
+        fill(255);
+      else
+        fill(255,fadeCount);
+    text("I didn't hear him say a word.", width/2,height-150);
+    }
+    if(textCount>=8){
+      if(fadeCount>=255||textCount>8)
+        fill(255);
+      else
+        fill(255,fadeCount);
+    text("Should I have done something?", width/2,height-100);
+    }
+    if(textCount>=9){
+      if(fadeCount>=255||textCount>9)
+        fill(255);
+      else
+        fill(255,fadeCount);
+    text("Is it too late now?", width/2, height-50);
+    }
+    fadeCount+=3;
+  }
+  else if(kitchen){
+    background(bclr);
+    fill(#5F0303);
+    rect(0,height-100,width,100);    
+    //fridge
+    fill(255);
+    noStroke();
+    rect(202,height-352,150,255,10);
+    rect(201,height-351,150,255,10);
+    stroke(0);
+    rect(200,height-350,150,255,10);
+    rect(200,height-275,150,10);
+    rect(210,height-340,15,55,5);
+    rect(210,height-240,15,110,5);
+
+    //TABLE
+    fill(#640003);
+    noStroke();
+    rect(width/2-113+150,height/2+113,25,40);
+    rect(width/2-114+150,height/2+114,25,40);
+    rect(width/2-18+150,height/2+113,25,40);
+    rect(width/2-19+150,height/2+114,25,40);
+    rect(width/2-123+150,height/2+83,145,30);
+    rect(width/2-124+150,height/2+84,145,30);
+    stroke(0);
+    rect(width/2-125+150,height/2+85,145,30);
+    rect(width/2-115+150,height/2+115,25,40);
+    rect(width/2-20+150,height/2+115,25,40);   
+    
+    //NEWSPAPER
+    fill(200);
+    rect(width/2+85-50,height/2+73,130,3);
+    rect(width/2+83-50,height/2+76,130,3);
+    rect(width/2+84-50,height/2+79,130,3);
+    rect(width/2+83-50,height/2+82,130,3);
+ 
+    if(bclr==50){
+      txt1="Hmm? What's that on the table?";
+    }
+    if(bclr==100){
+      human.apple=false;
+      txt1="I need to find out more.";
+    }
+    if(human.xCor>width/2+80-50&&human.xCor<width/2+80+140-50){
+      if (bclr!=100){
+        txt2="Oh yeah, I haven't read yesterday's paper yet.";
+      }
+      else
+        txt2="Oh my goodness, That's the child I saw yesterday!";
+    }
+    else if (human.xCor>200&&human.xCor<350&&bclr==50){
+      if(human.apple)
+        txt2 = "All right! An apple!";
+      else
+        txt2="Wonder if there's anything in the fridge.";
+    }
+    else if(atDoor){
+      if(bclr==50){
+      if(human.apple)
+        txt2 = "I should read the newspaper first.";
+      else
+        txt2="I should get something to eat first.";
+      }
+      else
+        txt2="My computer's in this room.";
+    }
+    else{
+      txt2= txt1;
+    }
+    d.display();
+    human.display();
+    checkDoor(d);
+  }
+  else if(newspaper){
+    txt2="";
+    background(250);
+    fill(250);
+    rect(-10,50,width+10,5);
+    rect(-10,170,width+10,5);
+    rect(10,185,width/4,300);
+    rect(220,185, 570,300);
+    rect(650,195,130,170);
+    textAlign(CENTER);
+    fill(0);
+    textSize(30);
+    text("The Daily Times",width/2,40);
+    textSize(40);
+    text("Child, Age 10, Goes Missing!\nKidnapping Suspected", width/2,100);
+    textSize(10);
+    textAlign(LEFT);
+    text(NewsBeat,20,195,width/4-20,300-20);
+   // text(Info,230,195,550,280);
+    fill(0,255,255);
+    quad(670,195+170,670+130-40,195+170,650+130-40,195+70,650+40,195+70);
+    fill(#FFF981);
+    ellipse(650+65,195+50,80,80);
+  }
+  else if(den){
+    background(bclr);
+    fill(#5F0303);
+    rect(0,height-100,width,100);
+   
+    //armchair
+    fill(#5F0330);
+    rect(140,height-180,75,90,15);
+    rect(100,height-300,50,210,15);
+    rect(110,height-200,120,30,15); 
+    
+    //table
+    fill(#640003);
+    noStroke();
+    rect(width/2-113+100,height/2+113,25,40);
+    rect(width/2-114+100,height/2+114,25,40);
+    rect(width/2-18+100,height/2+113,25,40);
+    rect(width/2-19+100,height/2+114,25,40);
+    rect(width/2-123+100,height/2+83,145,30);
+    rect(width/2-124+100,height/2+84,145,30);
+    stroke(0);
+    rect(width/2-125+100,height/2+85,145,30);
+    rect(width/2-115+100,height/2+115,25,40);
+    rect(width/2-20+100,height/2+115,25,40); 
+    
+    //laptop
+    fill(20);
+    noStroke();
+    rect(width/2-20,height/2+75,80,10);
+    rect(width/2+90,height/2+80,40,5,1);
+    translate(width/2-20+90,height/2+15);
+    rotate(PI/12);
+    rect(0,0,10,70);
+    rotate(-PI/12);
+    translate(-(width/2-20+90),-(height/2+15));
+    stroke(0);
+    //human.display();
+    
+    if(bclr==100)
+      txt1="I should search up more about human trafficking.";
+    else
+      txt1="I should call the number they gave me";
+    if(human.xCor>width/2-20&&human.xCor<width/2-20+80){
+      if(bclr==100)
+        txt2="My laptop; hope the internet still works.";
+      else
+        txt2="No time to waste, I have to call that hotline.";
+    }
+    else if(human.xCor>width/2+90&&human.xCor<width/2+90+40){
+      if(bclr==100)
+        txt2="My phone. No reason to use it.";
+      else
+        txt2="...I hope I'm not too late...";
+    }
+    else
+      txt2=txt1;
+    if(d.newDoor){
+      d.display();
+      txt2="And now, it's time to take the next step.";
+    }
+    human.display();
+    checkDoor(d);
+  }
+  else if(ecpat){
+    txt2="";
+    background(255);
+    fill(255);
+    rect(20,30,width-100,30);
+    rect(0,100,width-1,height-101);
+    fill(0);
+    textSize(25);
+    textAlign(LEFT);
+    text("www.ecpat.net",30,50);
+    textSize(40);
+    textAlign(CENTER);
+    text("If think you can help with any incident,\n please call us at:\n 1-888-373-7888\nor\ntext BeFree(233733)",width/2,150);    
+
+  }
+  else if (credits){
+    txt2="";
+    background(255);
+    human.display();
+  }
+
+  textAlign(CENTER);
+  textSize(25);
+  fill(0);
+  text(txt2,width/2,height-65);
+}
+
+void keyPressed(){
+  //print(keyCode);
+  if(keyCode==40){
+    main=false;
+    tv=true;
+  }
+  if(keyCode==37){
+    if(human.xCor-5>0){
+      human.xCor-=5;
+      human.isRight=false;
+    }
+  }
+  if(keyCode==39){
+    if(human.xCor+5<width){
+      human.xCor+=5;
+      human.isRight=true;
+    }
+  }
+  if(keyCode==38){
+    if(main){
+      if(atDoor){
+        main = false;
+        living = true;
+        human.xCor=100;
+      }
+    }
+    else if(living){
+      if(human.xCor>=width/2-120&&human.xCor<=width/2+5){
+        living = false;
+        tv = true;
+      }
+      if(atDoor&&bclr==50){
+        living = false;
+        kitchen = true;
+        human.xCor=100;
+      }
+    }
+    else if(tv){
+      tv = false;
+      flashback = true;
+      textCount=0;
+      fadeCount=0;
+      //background(0);
+    }
+    else if(flashback){
+      if(textCount>=9){
+        flashback = false;
+        living = true;
+        bclr=50;
+      }
+      else{
+        textCount++;
+        fadeCount=0;
+      }
+    }
+    else if(kitchen){
+      if(human.xCor>width/2+80-50&&human.xCor<width/2+80+140-50){
+        //human.apple=true;
+        newspaper = true;
+        kitchen = false;
+      }
+      else if(human.xCor>200&&human.xCor<350){
+        human.apple=true;
+      }
+      else if(atDoor&&bclr==100){
+        kitchen = false;
+        den = true;
+        human.xCor=100;
+      }
+    }
+    else if(newspaper){
+      newspaper = false;
+      kitchen = true;
+      bclr=100;
+    }
+    else if(den){
+      if(human.xCor>width/2-20&&human.xCor<width/2-20+80){
+        ecpat = true;
+        den = false;
+      }
+      if(human.xCor>width/2+90&&human.xCor<width/2+90+40&&bclr==150){
+        background(255);
+        d.newDoor=true;
+      }
+      if(atDoor&&d.newDoor){
+        den = false;
+        credits = true;
+        human.xCor=100;
+      }
+    }
+    else if(ecpat){
+      ecpat = false;
+      den = true;
+      bclr = 150;
+    }
+  }
+}
+
+void checkDoor(Door d){
+  if (abs(d.xCor-human.xCor)<50)
+    atDoor = true;
+  else
+    atDoor = false;
+}
+
+class Door{
+  boolean newDoor;
+  int xCor;  
+  Door(int x){
+    xCor=x;
+  }
+  void display(){
+    if(newDoor)
+      fill(255);
+    else
+      fill(#ED9D4D);
+    rect(xCor,height-350,150,250);
+    if(newDoor)
+      fill(220);
+    else
+      fill(#ED953C);
+    rect(xCor+20,height-350+20,40,100);
+    rect(xCor+90,height-350+20,40,100);
+    rect(xCor+20,height-350+130,40,100);
+    rect(xCor+90,height-350+130,40,100);
+    if(newDoor)
+      fill(#B7BFA4);
+    else
+      fill(#B7BFA4);
+    ellipse(xCor+10,height-350+125,15,15);
+  }
+}
+
+class Person{
+  boolean apple;
+  int animCount = 0;
+  int blinkCount = 0;
+  boolean blinking = false;
+  boolean closing = false;
+  boolean isRight;
+  boolean inhale = true;
+  color shirt = color(random(255),random(255),random(255));
+  int xCor;
+  Person(){
+    xCor = 100;
+  }
+  
+  void display(){
+    if (animCount>=60)
+      inhale=false;
+    if (animCount<=0)
+      inhale=true;
+    if(inhale)
+      animCount+=1;
+    else
+      animCount-=1;
+      
+    fill(shirt);
+    quad(xCor-25+animCount/15,height-250,xCor+25-animCount/20,height-250,xCor+35,height-90,xCor-35,height-90);
+    fill(#FFF981);
+    ellipse(xCor,height-250-animCount/15,75,75);
+    fill(0);
+    if(isRight){
+    rect(xCor+5,height-270-animCount/15,3,20-blinkCount);
+    rect(xCor+15,height-270-animCount/15,3,20-blinkCount);
+    rect(xCor-10,height-230-animCount/15,20,3);
+    fill(#FFF981);
+    ellipse(xCor-10,height-175-animCount/15,30,30);
+    }
+    else{
+    rect(xCor-5,height-270-animCount/15,3,20-blinkCount);
+    rect(xCor-15,height-270-animCount/15,3,20-blinkCount);
+    rect(xCor-10,height-230-animCount/15,20,3);
+    fill(#FFF981);
+    ellipse(xCor+10,height-175-animCount/15,30,30);
+    }
+    if(apple){
+      noStroke();
+      fill(255,0,0);
+      ellipse(xCor+5,height-175-animCount/15,20,30);
+      ellipse(xCor-5,height-175-animCount/15,20,30);
+      stroke(0);
+    }
+  }
+}
+</script>
+<canvas id="mycanvas"></canvas>
+
